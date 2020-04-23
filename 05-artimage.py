@@ -29,7 +29,7 @@ def gethtml(url): #定义获取url的函数
 def getallIamgeUrl(number,style):
     print("--获取图片列表---")
     allimageurisset = set()
-    path="./file/"+style+".txt"
+    path="../wikiartimg/file/"+style+".txt"
     j=0
     while j < int(number/60)+1:
 
@@ -178,9 +178,9 @@ def main(args):
     style =args.style# "early-renaissance"
     number = args.number#1617
     print(style," ",number)
-    imgdir="./img/"+style+"/"
-    writepath = "./file/"+style+"-download.txt"
-    readpath = "./file/" + style + ".txt"
+    imgdir="../wikiartimg/img/"+style+"/"
+    writepath = "../wikiartimg/file/"+style+"-download.txt"
+    readpath = "../wikiartimg/file/" + style + ".txt"
 
     if not os.path.exists(imgdir):
         os.mkdir(imgdir)
@@ -212,8 +212,7 @@ def main(args):
 
     file_obj_read.close()
 
-import time
-time.sleep()
+
 parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
 parser.add_argument("-style", type=str, required=True, help="图片风格.")
 parser.add_argument("-number", type=int, required=True, help="图片数量")
