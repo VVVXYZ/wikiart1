@@ -76,7 +76,7 @@ def findminIndex(sizelist):
             index0 = i
             break
     return index0
-def findImgUrl(uri):
+def findImgUrl(uri,failpath):
     url = "https://www.wikiart.org"+uri
     print("     a.寻找图片链接 在",url)
     html = gethtml(url)
@@ -85,6 +85,8 @@ def findImgUrl(uri):
     #soup =BeautifulSoup(html)
     if len(result)<1:
         print("         err2 ",uri," 没找到图片链接")
+        with open(failpath, 'a+',encoding='utf-8') as file_write_obj1:
+            file_write_obj1.writelines("没找到图片链接:"+url + "\n")
         return 0,0,0,0
     imgurlsstr = result[0].split("=")[-1].replace("&quot;",'"')
     data = json.loads(imgurlsstr)
@@ -134,7 +136,7 @@ def cleanUrl(url):
     print("       newurl:",newurl)
     return newurl
 
-def downloadImg(url,dir,imgname):
+def downloadImg(url,dir,imgname,failpath):
     #&#224;-1508.jpg!Portrait.jpg
     #url = url.replace("&#224;",'')
     newurl = cleanUrl(url)
@@ -160,6 +162,8 @@ def downloadImg(url,dir,imgname):
             return True
     except:
         print("         err3 下载图片失败")
+        with open(failpath, 'a+',encoding='utf-8') as file_write_obj1:
+            file_write_obj1.writelines("下载图片失败:"+newurl + "\n")
         return False
 
 #python  05-artimage.py -style proto-renaissance -number 440
@@ -180,6 +184,7 @@ def main(args):
     print(style," ",number)
     imgdir="../wikiartimg/img/"+style+"/"
     writepath = "../wikiartimg/file/"+style+"-download.txt"
+    failpath = "../wikiartimg/file/"+style+"-fail.txt"
     readpath = "../wikiartimg/file/" + style + ".txt"
 
     if not os.path.exists(imgdir):
@@ -199,13 +204,13 @@ def main(args):
         imgname = line.split("/")[-2]+"+"+line.split("/")[-1] + ".jpg"
         print("------{}: {}----".format(i+1,imgname))
         if not os.path.exists(imgdir + imgname):
-            ok,imgurl,Width,Height = findImgUrl(line)
+            ok,imgurl,Width,Height = findImgUrl(line,failpath)
             if ok>0:
                 line = line+"?W*H:"+str(Width)+"*"+str(Height)
                 print("       ",imgurl)
                 print("       ",line)
 
-                if downloadImg(url=imgurl, dir=imgdir,imgname=imgname):
+                if downloadImg(url=imgurl, dir=imgdir,imgname=imgname,failpath=failpath):
                     with open(writepath, 'a+',encoding='utf-8') as file_write_obj:
                         file_write_obj.writelines(str(line) + "\n")
 
